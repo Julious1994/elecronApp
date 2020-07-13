@@ -1,19 +1,91 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-    <title>Hello World!</title>
-  </head>
-  <body>
-    <h1>Hello World!</h1>
-    We are using Node.js <span id="node-version"></span>,
-    Chromium <span id="chrome-version"></span>,
-    and Electron <span id="electron-version"></span>.
+<head>
+<meta charset="UTF-8">
+<!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+<!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+<meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'"> -->
+<title>Hello World!</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<img src="ubblu.png" id="ubblu"/>
+<!-- You can also require other files to run in this process -->
+<script>require("./renderer.js")</script>
+<script>require("./notification.js")</script>
+<!-- <script>
+var ipcRenderer = require("electron").ipcRenderer;
+const img = document.getElementById('ubblu');
+    img.addEventListener('click', function() {
+    ipcRenderer.send("show-ubblu");
+});
+</script> -->
+<script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-app.js"></script>
 
-    <!-- You can also require other files to run in this process -->
-    <script src="./renderer.js"></script>
-  </body>
+  <!-- If you enabled Analytics in your project, add the Firebase SDK for Analytics -->
+  <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-analytics.js"></script>
+
+  <!-- Add Firebase products that you want to use -->
+  <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-messaging.js"></script>
+  <!-- <script src="https://www.gstatic.com/firebasejs/init.js"></script> -->
+<script>
+    var firebaseConfig = {
+        apiKey: 'AIzaSyCebga-Ggu4KgSKF05rc90f_xmgBh7HoHQ',
+        messagingSenderId: '587913584845',
+        appId: '1:587913584845:android:800f8cdcffa71feeba4984',
+        projectId: 'carny-firebase',
+    };
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+    // [START get_messaging_object]
+    // Retrieve Firebase Messaging object.
+    const messaging = firebase.messaging();
+    // [END get_messaging_object]
+    // [START set_public_vapid_key]
+    // Add the public key generated from the console here.
+    messaging.usePublicVapidKey('BGMw96HHLGv_6YR9dfZvCA2LdosYAubHsm9KQ4IlrdsNg9Tn1T5w-pOlvD3d-K3BHg0QaN4KY-YRo5fLD0aUReY');
+    // [END set_public_vapid_key]
+  
+    // IDs of divs that display Instance ID token UI or request permission UI.
+    const tokenDivId = 'token_div';
+    const permissionDivId = 'permission_div';
+  
+    // [START refresh_token]
+    // Callback fired if Instance ID token is updated.
+    messaging.onTokenRefresh(() => {
+      messaging.getToken().then((refreshedToken) => {
+        console.log('Token refreshed.');
+        // Indicate that the new Instance ID token has not yet been sent to the
+        // app server.
+        setTokenSentToServer(false);
+        // Send Instance ID token to app server.
+        sendTokenToServer(refreshedToken);
+        // [START_EXCLUDE]
+        // Display new Instance ID token and clear UI of all previous messages.
+        resetUI();
+        // [END_EXCLUDE]
+      }).catch((err) => {
+        console.log('Unable to retrieve refreshed token ', err);
+        showToken('Unable to retrieve refreshed token ', err);
+      });
+    });
+    // [END refresh_token]
+  
+    // [START receive_message]
+    // Handle incoming messages. Called when:
+    // - a message is received while the app has focus
+    // - the user clicks on an app notification created by a service worker
+    //   `messaging.setBackgroundMessageHandler` handler.
+    messaging.onMessage((payload) => {
+      console.log('Message received. ', payload);
+      // [START_EXCLUDE]
+      // Update the UI to include the received message.
+    //   appendMessage(payload);
+      // [END_EXCLUDE]
+    });
+    // [END receive_message]
+</script>
+
+</body>
 </html>

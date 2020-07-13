@@ -1,0 +1,13 @@
+body {
+    background-color: transparent;
+    /* -webkit-app-region: drag; */
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+}
+    
+img {
+    width: 75px;
+    height: 75px;
+    -webkit-app-region: no-drag;
+}
