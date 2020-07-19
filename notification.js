@@ -11,6 +11,7 @@ function initNotification() {
   // Listen for service successfully started
   ipcRenderer.on(NOTIFICATION_SERVICE_STARTED, (_, token) => {
     console.log("service successfully started", token);
+    ipcRenderer.send('set-token', token);
   });
   // Handle notification errors
   ipcRenderer.on(NOTIFICATION_SERVICE_ERROR, (_, error) => {
@@ -42,7 +43,7 @@ function initNotification() {
     }
   });
   // Start service
-  const senderId = "587913584845"; // <-- replace with FCM sender ID from FCM web admin under Settings->Cloud Messaging
+  const senderId = "432182666518"; // <-- replace with FCM sender ID from FCM web admin under Settings->Cloud Messaging
   console.log("starting service and registering a client");
   ipcRenderer.send(START_NOTIFICATION_SERVICE, senderId);
 }
