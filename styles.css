@@ -6,8 +6,9 @@ body {
     padding: 0;
 }
     
-img {
+.ubblu {
     width: 75px;
     height: 75px;
-    -webkit-app-region: no-drag;
+    background-color: aliceblue;
+    background-image: url("ubblu.png");
 }
