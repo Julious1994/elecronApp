@@ -7,6 +7,7 @@ const { setup: setupPushReceiver } = require("electron-push-receiver");
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
+let token;
 
 function createWindow() {
   // Create the browser window.
@@ -29,12 +30,12 @@ function createWindow() {
     globals: { platform: "electron" },
     webPreferences: {
       nodeIntegration: true,
+      preload: __dirname + '/preload.js'
     },
   });
   mainWindow.removeMenu();
   mainWindow.setAlwaysOnTop(true);
   // and load the index.html of the app.
-  // mainWindow.loadURL(`http://ubblu.ga/`);
   mainWindow.loadURL(`file://${path.join(__dirname, "./index.html")}`);
   let myNotification = new Notification("Title", {
     body: "Lorem Ipsum Dolor Sit Amet",
@@ -53,9 +54,6 @@ function createWindow() {
 
   // Emitted when the window is closed.
   mainWindow.on("closed", function () {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
     mainWindow = null;
   });
   mainWindow.on("resize", function () {});
@@ -63,7 +61,6 @@ function createWindow() {
     mainWindow.reload();
   });
   mainWindow.on("unmaximize", function () {
-    // Dereference the window object, usually you would store windows
     mainWindow.reload();
   });
   setupPushReceiver(mainWindow.webContents);
@@ -74,10 +71,9 @@ let ubbluWindow;
 function createUbbluWindow() {
   // Create the browser window.
   ubbluWindow = new BrowserWindow({
-    maxWidth: 380,
-    minWidth: 380,
+    maxWidth: 580,
+    minWidth: 580,
     minHeight: 550,
-    minWidth: 380,
     maximizable: true,
     fullscreenable: true,
     // resizable: false,
@@ -88,31 +84,25 @@ function createUbbluWindow() {
     title: "Ubblu",
     globals: { platform: "electron" },
     show: false,
+    webPreferences: {
+      nodeIntegration: true,
+      preload: __dirname + '/preload.js'
+    },
   });
   ubbluWindow.removeMenu();
   ubbluWindow.setAlwaysOnTop(true);
   // and load the index.html of the app.
-  ubbluWindow.loadURL(`http://ubblu.ga/`);
+  ubbluWindow.loadURL(`http://localhost:3010/69/login`);
   // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+  // ubbluWindow.webContents.openDevTools()
 
-  // Emitted when the window is closed.
   ubbluWindow.on("closed", function () {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
     ubbluWindow = null;
   });
   ubbluWindow.on("maximize", function () {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
     ubbluWindow.reload();
   });
   ubbluWindow.on("unmaximize", function () {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
     ubbluWindow.reload();
   });
 }
@@ -123,12 +113,11 @@ function createNotificationWindow() {
   notificationWindow = new BrowserWindow({
     maxWidth: 350,
     minWidth: 350,
-    height: 110,
+    height: 150,
     maximizable: false,
     fullscreenable: false,
     // resizable: false,
     frame: false,
-    // movable: true,
     titleBarStyle: "hiddenInset",
     title: "Ubblu",
     globals: { platform: "electron" },
@@ -147,31 +136,20 @@ function createNotificationWindow() {
 
   // Emitted when the window is closed.
   notificationWindow.on("closed", function () {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
     notificationWindow = null;
   });
   notificationWindow.on("maximize", function () {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
     notificationWindow.reload();
   });
   notificationWindow.on("unmaximize", function () {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
     notificationWindow.reload();
   });
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
 app.on("ready", function () {
   createWindow();
   createUbbluWindow();
+  createNotificationWindow();
   ipcRenderer.on("show-ubblu", function () {
     if (!ubbluWindow) {
       createUbbluWindow();
@@ -186,17 +164,28 @@ app.on("ready", function () {
     mainWindow.setBounds({ x: xpos, y: position.y });
     console.log("position", position, width, height, xpos);
   });
-  ipcRenderer.on("show-notification", function (e, position) {
-    createNotificationWindow();
+  ipcRenderer.on("show-notification", function (e, data) {
     const bounds = mainWindow.getBounds();
     notificationWindow.setBounds({ x: bounds.x - 500, y: bounds.y - 650 });
     notificationWindow.show();
+    notificationWindow.webContents.send('handle-notification', data);
   });
   ipcRenderer.on("hide-notification", function () {
     if(notificationWindow) {
-      notificationWindow.close();
+      notificationWindow.hide();
     }
   });
+  
+  ipcRenderer.on("get-notification-token", function() {
+    // const token = localStorage.getItem('token');
+    // alert('notification register');
+    console.log('token', token);
+    ubbluWindow.webContents.send('register-notification', token);
+  });
+
+  ipcRenderer.on("set-token", (e, _token) => {
+    token = _token;
+  })
 });
 
 // Quit when all windows are closed.
