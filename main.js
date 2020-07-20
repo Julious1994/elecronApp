@@ -8,25 +8,23 @@ const { setup: setupPushReceiver } = require("electron-push-receiver");
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 let token;
+let _screen;
+let ubbluWindowSize;
 
 function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    // maxWidth: 380,
-    // minWidth: 380,
-    // minHeight: 550,
-    maxWidth: 75,
-    // minWidth: 380,
-    maxHeight: 75,
+    width: 75,
+    height: 75,
     maximizable: false,
     fullscreenable: false,
-    // resizable: false,
+    resizable: false,
     frame: false,
     movable: true,
     // transparent: true,
-    titleBarStyle: "hiddenInset",
+    titleBarStyle: "hidden",
     title: "Ubblu",
-    transparent: true,
+    transparent: false,
     globals: { platform: "electron" },
     webPreferences: {
       nodeIntegration: true,
@@ -37,18 +35,6 @@ function createWindow() {
   mainWindow.setAlwaysOnTop(true);
   // and load the index.html of the app.
   mainWindow.loadURL(`file://${path.join(__dirname, "./index.html")}`);
-  let myNotification = new Notification("Title", {
-    body: "Lorem Ipsum Dolor Sit Amet",
-  });
-  myNotification.title = "Title";
-  myNotification.body =
-    "<div style='display:flex;'><span>Amit Patel</span><b>Hello world</b></div>";
-  myNotification.onclick = () => {
-    console.log("Notification clicked");
-  };
-
-  myNotification.show();
-
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
 
@@ -70,16 +56,19 @@ let ubbluWindow;
 
 function createUbbluWindow() {
   // Create the browser window.
+  console.log(_screen.width, _screen.width * 0.20);
+  ubbluWindowSize = {
+    width: Math.round(_screen.width * 0.25),
+    height: Math.round(_screen.height * 0.70),
+  };
   ubbluWindow = new BrowserWindow({
-    maxWidth: 580,
-    minWidth: 580,
-    minHeight: 550,
+    ...ubbluWindowSize,
     maximizable: true,
     fullscreenable: true,
     // resizable: false,
     // frame: false,
     // movable: true,
-    transparent: true,
+    transparent: false,
     titleBarStyle: "hiddenInset",
     title: "Ubblu",
     globals: { platform: "electron" },
@@ -92,7 +81,7 @@ function createUbbluWindow() {
   ubbluWindow.removeMenu();
   ubbluWindow.setAlwaysOnTop(true);
   // and load the index.html of the app.
-  ubbluWindow.loadURL(`http://localhost:3010/69/login`);
+  ubbluWindow.loadURL(`http://ubblu.ga/69/login`);
   // Open the DevTools.
   // ubbluWindow.webContents.openDevTools()
 
@@ -111,9 +100,8 @@ let notificationWindow;
 
 function createNotificationWindow() {
   notificationWindow = new BrowserWindow({
-    maxWidth: 350,
-    minWidth: 350,
-    height: 150,
+    width: 350,
+    maxHeight: 150,
     maximizable: false,
     fullscreenable: false,
     // resizable: false,
@@ -146,7 +134,42 @@ function createNotificationWindow() {
   });
 }
 
+function getUbbluAppPosition({x, y}) {
+  const {width, height} = _screen;
+  let _x;
+  let _y;
+  if(ubbluWindow && ubbluWindowSize) {
+    const _height = ubbluWindowSize.height + 10;
+    const _width = ubbluWindowSize.width;
+    const halfWidth = _width/2;
+    if(_height < y) {
+      _y = y - _height;
+    } else {
+      _y = y + 85;
+    }
+    if(x + 75 >= width) {
+      _x = width - _width;
+    } else if(x <= halfWidth) {
+      _x = 10;
+    } else {
+      _x = x - (halfWidth - 25);
+    }
+  }
+  console.log('screen', _screen, 'main', x, y, 'ubblu', _x, _y, 'ubblu size');
+  return {x: _x, y: _y};
+}
+
+function getPosition({x, y}) {
+  const {width, height} = _screen;
+  const _x = x < 0 ? 0 : x + 10 < width ? x : width - 75;
+  const _y = y < 0 ? 0 : y + 10 < height ? y : height - 75;
+  const mainPostion = {x: _x, y: _y}
+  const ubbluPosition = getUbbluAppPosition(mainPostion)
+  return {mainPostion, ubbluPosition};
+}
+
 app.on("ready", function () {
+  _screen = screen.getPrimaryDisplay().workAreaSize;
   createWindow();
   createUbbluWindow();
   createNotificationWindow();
@@ -155,14 +178,17 @@ app.on("ready", function () {
       createUbbluWindow();
     }
     const bounds = mainWindow.getBounds();
-    ubbluWindow.setBounds({ x: bounds.x - 150, y: bounds.y - 650 });
+    const ubbluPosition = getUbbluAppPosition({ x: bounds.x, y: bounds.y });
+    ubbluWindow.setBounds({ ...ubbluPosition });
     ubbluWindow.show();
   });
   ipcRenderer.on("position-ubblu", function (e, position) {
-    const { width, height } = screen.getPrimaryDisplay().workAreaSize;
-    const xpos = position.x < 1910 ? position.x : width + 10;
-    mainWindow.setBounds({ x: xpos, y: position.y });
-    console.log("position", position, width, height, xpos);
+    const {mainPostion, ubbluPosition} = getPosition(position);
+    mainWindow.setBounds({ ...mainPostion });
+    if(ubbluWindow) {
+      ubbluWindow.setBounds({ ...ubbluPosition });
+    }
+    
   });
   ipcRenderer.on("show-notification", function (e, data) {
     const bounds = mainWindow.getBounds();
