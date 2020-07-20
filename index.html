@@ -13,13 +13,13 @@
 <!-- You can also require other files to run in this process -->
 <script>require("./renderer.js")</script>
 <script>require("./notification.js")</script>
-<!-- <script>
+<script>
 var ipcRenderer = require("electron").ipcRenderer;
-const img = document.getElementById('ubblu');
-    img.addEventListener('click', function() {
-    ipcRenderer.send("show-ubblu");
+ipcRenderer.on('ubblu-icon', function(e, image) {
+  const ubblu = document.getElementById('ubblu');
+  ubblu.style.backgroundImage = `url("${image}.png")`;
 });
-</script> -->
+</script>
 <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-app.js"></script>
 
   <!-- If you enabled Analytics in your project, add the Firebase SDK for Analytics -->

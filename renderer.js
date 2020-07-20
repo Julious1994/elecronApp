@@ -7,7 +7,7 @@ initNotification();
 
 img.addEventListener('mouseup', function() {
 ipcRenderer.send("show-ubblu");
-ipcRenderer.send("show-notification");
+// ipcRenderer.send("show-notification");
 });
 img.addEventListener('drag', function(e) {
 // console.log('drag', e);

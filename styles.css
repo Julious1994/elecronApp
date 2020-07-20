@@ -10,5 +10,7 @@ body {
     width: 75px;
     height: 75px;
     background-color: aliceblue;
-    background-image: url("ubblu.png");
+    background-image: url("full.png");
+    background-size: cover;
+    border-radius: 10px;
 }

@@ -24,7 +24,6 @@ function createWindow() {
     // transparent: true,
     titleBarStyle: "hidden",
     title: "Ubblu",
-    transparent: false,
     globals: { platform: "electron" },
     webPreferences: {
       nodeIntegration: true,
@@ -136,8 +135,8 @@ function createNotificationWindow() {
 
 function getUbbluAppPosition({x, y}) {
   const {width, height} = _screen;
-  let _x;
-  let _y;
+  let _x = 0;
+  let _y = 0;
   if(ubbluWindow && ubbluWindowSize) {
     const _height = ubbluWindowSize.height + 10;
     const _width = ubbluWindowSize.width;
@@ -156,14 +155,34 @@ function getUbbluAppPosition({x, y}) {
     }
   }
   console.log('screen', _screen, 'main', x, y, 'ubblu', _x, _y, 'ubblu size');
-  return {x: _x, y: _y};
+  return {x: Math.round(_x), y: Math.round(_y)};
 }
 
 function getPosition({x, y}) {
   const {width, height} = _screen;
-  const _x = x < 0 ? 0 : x + 10 < width ? x : width - 75;
-  const _y = y < 0 ? 0 : y + 10 < height ? y : height - 75;
-  const mainPostion = {x: _x, y: _y}
+  let image = 'full';
+  let size = {width: 75, height: 75};
+  const _x = x < 0 ? 0 : x + 10 < width ? x : width;
+  const _y = y < 0 ? 0 : y + 10 < height ? y : height;
+  
+  if(_x >= width) {
+    image = 'right';
+    mainWindow.setBounds({ width: Math.floor(size.width / 2), height: size.height})
+  } else if (_x <= 0) {
+    image = 'left';
+    mainWindow.setBounds({ width: Math.floor(size.width / 2), height: size.height})
+  } else if(_y <= 0) {
+    image = 'top';
+    mainWindow.setBounds({ height: Math.floor(size.height / 2), width: size.width})
+    
+  } else if(_y >= height) {
+    image = 'bottom';
+    mainWindow.setBounds({ height: Math.floor(size.height / 2), width: size.width})
+  } else {
+    mainWindow.setBounds({...size});
+  }
+  mainWindow.webContents.send('ubblu-icon', image);
+  const mainPostion = {x: Math.round(_x), y: Math.round(_y)}
   const ubbluPosition = getUbbluAppPosition(mainPostion)
   return {mainPostion, ubbluPosition};
 }
@@ -176,17 +195,19 @@ app.on("ready", function () {
   ipcRenderer.on("show-ubblu", function () {
     if (!ubbluWindow) {
       createUbbluWindow();
+    } else {
+      const bounds = mainWindow.getBounds();
+      const ubbluPosition = getUbbluAppPosition({ x: bounds.x, y: bounds.y });
+      ubbluWindow.show();
+      ubbluWindow.setBounds({ ...ubbluPosition });
     }
-    const bounds = mainWindow.getBounds();
-    const ubbluPosition = getUbbluAppPosition({ x: bounds.x, y: bounds.y });
-    ubbluWindow.setBounds({ ...ubbluPosition });
-    ubbluWindow.show();
   });
   ipcRenderer.on("position-ubblu", function (e, position) {
     const {mainPostion, ubbluPosition} = getPosition(position);
     mainWindow.setBounds({ ...mainPostion });
     if(ubbluWindow) {
-      ubbluWindow.setBounds({ ...ubbluPosition });
+      console.log(ubbluPosition);
+      ubbluWindow.setBounds({ x: ubbluPosition.x, y: ubbluPosition.y });
     }
     
   });
