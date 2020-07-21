@@ -33,6 +33,9 @@ function initNotification() {
         ...serverNotificationPayload.notification,
         ...serverNotificationPayload.data,
       };
+      if(data.payload && typeof data.payload === 'string') {
+        data.payload = JSON.parse(data.payload);
+      }
       ipcRenderer.send("show-notification", data);
     } else {
       // payload has no body, so consider it silent (and just consider the data portion)

@@ -34,6 +34,9 @@
 <!-- <script>require("./notification.js")</script> -->
 <script>
 var ipcRenderer = require("electron").ipcRenderer;
+var io = require("socket.io-client");
+let data;
+const SOCKET_URI = 'https://backend.ubblu.ga';
 const img = document.getElementById('closeNotification');
     img.addEventListener('click', function() {
     ipcRenderer.send("hide-notification");
@@ -43,6 +46,7 @@ ipcRenderer.on('handle-notification', function (e, notification) {
    const title = document.getElementById('title');
    const message = document.getElementById('message');
    if(notification) {
+       data = notification.payload;
        title.innerText = notification.title;
        message.innerHTML = notification.body;
    }
@@ -50,7 +54,26 @@ ipcRenderer.on('handle-notification', function (e, notification) {
 const sendButton = document.getElementById('send-button');
 sendButton.addEventListener('click', function() {
     const replyInput = document.getElementById('reply-input');
-    alert(replyInput.value)
+    socket = io(`${SOCKET_URI}/chatroom`, { transports: ['websocket'] });
+    socket.on('connect', function() {
+        let sentMessageObject = {
+            messageType: "TEXT",
+            isPinned: false,
+            pinnedBy: null,
+            pinnedAt: null,
+            quotedMsgId: "null",
+            isTagged: false,
+            tagged_id: null,
+            ...data,
+            message: replyInput.value,
+            senderId: data.receiverId,
+            receiverId: data.senderId,
+          };
+          socket.emit('newMessage', sentMessageObject);
+          socket.on('addMessage', (msg) => {
+          ipcRenderer.send("hide-notification");
+        });
+    });
 });
 
 </script>
