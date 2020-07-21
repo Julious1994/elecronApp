@@ -13,9 +13,14 @@ let ubbluWindowSize;
 
 function createWindow() {
   // Create the browser window.
+  const initialPosition = {
+    x: Math.round(_screen.width * 0.80),
+    y: Math.round(_screen.height * 0.80),
+  };
   mainWindow = new BrowserWindow({
     width: 75,
     height: 75,
+    ...initialPosition,
     maximizable: false,
     fullscreenable: false,
     resizable: false,
@@ -55,7 +60,6 @@ let ubbluWindow;
 
 function createUbbluWindow() {
   // Create the browser window.
-  console.log(_screen.width, _screen.width * 0.20);
   ubbluWindowSize = {
     width: Math.round(_screen.width * 0.25),
     height: Math.round(_screen.height * 0.70),
@@ -154,7 +158,6 @@ function getUbbluAppPosition({x, y}) {
       _x = x - (halfWidth - 25);
     }
   }
-  console.log('screen', _screen, 'main', x, y, 'ubblu', _x, _y, 'ubblu size');
   return {x: Math.round(_x), y: Math.round(_y)};
 }
 
@@ -162,10 +165,10 @@ function getPosition({x, y}) {
   const {width, height} = _screen;
   let image = 'full';
   let size = {width: 75, height: 75};
-  const _x = x < 0 ? 0 : x + 10 < width ? x : width;
-  const _y = y < 0 ? 0 : y + 10 < height ? y : height;
+  const _x = x < 0 ? 0 : x + 10 < width ? x : width - 25;
+  const _y = y < 0 ? 0 : y + 10 < height ? y : height - 25;
   
-  if(_x >= width) {
+  if(_x >= width - size.width) {
     image = 'right';
     mainWindow.setBounds({ width: Math.floor(size.width / 2), height: size.height})
   } else if (_x <= 0) {
@@ -175,7 +178,7 @@ function getPosition({x, y}) {
     image = 'top';
     mainWindow.setBounds({ height: Math.floor(size.height / 2), width: size.width})
     
-  } else if(_y >= height) {
+  } else if(_y >= height - size.height) {
     image = 'bottom';
     mainWindow.setBounds({ height: Math.floor(size.height / 2), width: size.width})
   } else {
@@ -206,7 +209,6 @@ app.on("ready", function () {
     const {mainPostion, ubbluPosition} = getPosition(position);
     mainWindow.setBounds({ ...mainPostion });
     if(ubbluWindow) {
-      console.log(ubbluPosition);
       ubbluWindow.setBounds({ x: ubbluPosition.x, y: ubbluPosition.y });
     }
     
