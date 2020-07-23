@@ -26,7 +26,7 @@ function createWindow() {
     resizable: false,
     frame: false,
     movable: true,
-    // transparent: true,
+    transparent: true,
     titleBarStyle: "hidden",
     title: "Ubblu",
     globals: { platform: "electron" },
@@ -102,9 +102,15 @@ function createUbbluWindow() {
 let notificationWindow;
 
 function createNotificationWindow() {
+  const position = {
+    x: _screen.width - 350,
+    y: 10,
+  }
+  console.log(position)
   notificationWindow = new BrowserWindow({
     width: 350,
-    maxHeight: 150,
+    height: 150,
+    ...position,
     maximizable: false,
     fullscreenable: false,
     // resizable: false,
@@ -214,8 +220,8 @@ app.on("ready", function () {
     
   });
   ipcRenderer.on("show-notification", function (e, data) {
-    const bounds = mainWindow.getBounds();
-    notificationWindow.setBounds({ x: bounds.x - 500, y: bounds.y - 650 });
+    // const bounds = mainWindow.getBounds();
+    // notificationWindow.setBounds({ x: bounds.x - 500, y: bounds.y - 550 });
     notificationWindow.show();
     notificationWindow.webContents.send('handle-notification', data);
   });
