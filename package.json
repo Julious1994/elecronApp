@@ -1,7 +1,7 @@
 {
-  "name": "electron-quick-start",
+  "name": "Ubblu",
   "version": "1.0.0",
-  "description": "A minimal Electron application",
+  "description": "A Chat application",
   "main": "main.js",
   "scripts": {
     "start": "electron --enable-transparent-visuals --disable-gpu .",
@@ -23,6 +23,7 @@
   "dependencies": {
     "electron-packager": "^14.2.0",
     "electron-push-receiver": "^2.1.3",
-    "ipc": "^0.0.1"
+    "ipc": "^0.0.1",
+    "socket.io-client": "^2.3.0"
   }
 }
