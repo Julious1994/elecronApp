@@ -12,15 +12,14 @@
     <div class="container">
         <div class="message-container">
             <div class="avatar">
-                <img src="ubblu.png" class="profile-pic" />
+                <div id="profile-initial" class="profile-initial">AP</div>
+                <!-- <img id="profile-pic" src="ubblu.png" class="profile-pic" /> -->
             </div>
             <div class="message-info">
                 <span class="title" id="title">Name of person</span>
                 <span class="content" id="message">Message here...</span>
             </div>
-            <span class="close" id="closeNotification">
-                x
-            </span>
+            <img src="close.svg" class="close" id="closeNotification" />
         </div>
         <div class="reply">
             <div class="input-container">
@@ -45,10 +44,13 @@ ipcRenderer.on('handle-notification', function (e, notification) {
    console.log('notify', e, notification);
    const title = document.getElementById('title');
    const message = document.getElementById('message');
+   const profileInitial = document.getElementById('profile-initial');
+   
    if(notification) {
        data = notification.payload;
        title.innerText = notification.title;
        message.innerHTML = notification.body;
+       profileInitial.innerText = notification.title.substring(0, 2).toUpperCase();
    }
 });
 const sendButton = document.getElementById('send-button');
