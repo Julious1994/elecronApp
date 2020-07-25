@@ -11,6 +11,19 @@ let token;
 let _screen;
 let ubbluWindowSize;
 
+const appFolder = path.dirname(process.execPath)
+const updateExe = path.resolve(appFolder, '..', 'Update.exe')
+const exeName = path.basename(process.execPath)
+
+app.setLoginItemSettings({
+  openAtLogin: true,
+  path: updateExe,
+  args: [
+    '--processStart', `"${exeName}"`,
+    '--process-start-args', `"--hidden"`
+  ]
+});
+
 function createWindow() {
   // Create the browser window.
   const initialPosition = {
@@ -66,9 +79,9 @@ function createUbbluWindow() {
   };
   ubbluWindow = new BrowserWindow({
     ...ubbluWindowSize,
-    maximizable: true,
-    fullscreenable: true,
-    // resizable: false,
+    maximizable: false,
+    fullscreenable: false,
+    resizable: false,
     // frame: false,
     // movable: true,
     transparent: false,
@@ -86,8 +99,8 @@ function createUbbluWindow() {
   // and load the index.html of the app.
   ubbluWindow.loadURL(`http://ubblu.ga/69/login`);
   // Open the DevTools.
-  // ubbluWindow.webContents.openDevTools()
 
+  // ubbluWindow.webContents.openDevTools()
   ubbluWindow.on("closed", function () {
     ubbluWindow = null;
   });
@@ -103,13 +116,13 @@ let notificationWindow;
 
 function createNotificationWindow() {
   const position = {
-    x: _screen.width - 350,
-    y: 10,
+    x: _screen.width - 325,
+    y: _screen.height - 150,
   }
   console.log(position)
   notificationWindow = new BrowserWindow({
-    width: 350,
-    height: 150,
+    width: 300,
+    height: 115,
     ...position,
     maximizable: false,
     fullscreenable: false,
@@ -236,6 +249,11 @@ app.on("ready", function () {
     // notificationWindow.setBounds({ x: bounds.x - 500, y: bounds.y - 550 });
     notificationWindow.show();
     notificationWindow.webContents.send('handle-notification', data);
+    setTimeout(() => {
+      if(notificationWindow) {
+        notificationWindow.hide();
+      }  
+    }, 5000);
   });
   ipcRenderer.on("hide-notification", function () {
     if(notificationWindow) {
