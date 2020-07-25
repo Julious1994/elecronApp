@@ -151,17 +151,29 @@ function getUbbluAppPosition({x, y}) {
     const _height = ubbluWindowSize.height + 10;
     const _width = ubbluWindowSize.width;
     const halfWidth = _width/2;
-    if(_height < y) {
+    let widthFlag = true;
+    if(_height < y) {  // check for up space
       _y = y - _height;
-    } else {
+    } else if(_height < (height - (y + 85))) {   // check for down space
       _y = y + 85;
-    }
-    if(x + 75 >= width) {
-      _x = width - _width;
-    } else if(x <= halfWidth) {
-      _x = 10;
+    } else if(_width < (width - (x + 75))) {  // check for right side
+      _x = x + 75;
+      _y = y / 2;
+      widthFlag = false;
     } else {
-      _x = x - (halfWidth - 25);
+      // set for left side
+      _x = x - (_width + 75);
+      _y = y / 2;
+      widthFlag = false;
+    }
+    if(widthFlag) {
+      if(x + 75 >= width) {
+        _x = width - _width;
+      } else if(x <= halfWidth) {
+        _x = 10;
+      } else {
+        _x = x - (halfWidth - 25);
+      }
     }
   }
   return {x: Math.round(_x), y: Math.round(_y)};
