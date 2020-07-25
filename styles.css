@@ -11,6 +11,5 @@ body {
     height: 75px;
     /* background-color: aliceblue; */
     background-image: url("full.png");
-    background-size: cover;
-    border-radius: 50%;
+    background-size: contain;
 }
