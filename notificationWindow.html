@@ -1,64 +1,80 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="UTF-8">
-<!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-<!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
 <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'"> -->
-<title>Hello World!</title>
-<link rel="stylesheet" href="notificationStyles.css">
-</head>
-<body class="notification-body">
+    <title>Hello World!</title>
+    <link rel="stylesheet" href="notificationStyles.css" />
+  </head>
+  <body class="notification-body">
     <div class="container">
-        <div class="message-container">
-            <div class="avatar">
-                <div id="profile-initial" class="profile-initial">AP</div>
-                <!-- <img id="profile-pic" src="ubblu.png" class="profile-pic" /> -->
-            </div>
-            <div class="message-info">
-                <span class="title" id="title">Name of person</span>
-                <span class="content" id="message">Message here...</span>
-            </div>
-            <img src="close.svg" class="close" id="closeNotification" />
+      <div class="message-container">
+        <div class="avatar">
+          <div id="profile-initial" class="profile-initial">AP</div>
+          <!-- <img id="profile-pic" src="ubblu.png" class="profile-pic" /> -->
         </div>
-        <div class="reply">
-            <div class="input-container">
-                <input type="text" class="reply-input" id="reply-input" />
-                <img src="./send.png" id="send-button" alt="send" class="send-img"/>
-            </div>
-            <!-- <button type="button" id="send-button">Send</button> -->
+        <div class="message-info">
+          <span class="title" id="title">Name of person</span>
+          <span class="content" id="message">Message here...</span>
         </div>
+        <img src="close.svg" class="close" id="closeNotification" />
+      </div>
+      <div class="reply">
+        <div class="input-container">
+          <input type="text" class="reply-input" id="reply-input" />
+          <img src="./send.svg" id="send-button" alt="send" class="send-img" />
+        </div>
+        <!-- <button type="button" id="send-button">Send</button> -->
+      </div>
     </div>
-<!-- You can also require other files to run in this process -->
-<!-- <script>require("./notification.js")</script> -->
-<script>
-var ipcRenderer = require("electron").ipcRenderer;
-var io = require("socket.io-client");
-let data;
-const SOCKET_URI = 'https://backend.ubblu.ga';
-const img = document.getElementById('closeNotification');
-    img.addEventListener('click', function() {
-    ipcRenderer.send("hide-notification");
-});
-ipcRenderer.on('handle-notification', function (e, notification) {
-   console.log('notify', e, notification);
-   const title = document.getElementById('title');
-   const message = document.getElementById('message');
-   const profileInitial = document.getElementById('profile-initial');
-   
-   if(notification) {
-       data = notification.payload;
-       title.innerText = notification.title;
-       message.innerHTML = notification.body;
-       profileInitial.innerText = notification.title.substring(0, 2).toUpperCase();
-   }
-});
-const sendButton = document.getElementById('send-button');
-sendButton.addEventListener('click', function() {
-    const replyInput = document.getElementById('reply-input');
-    socket = io(`${SOCKET_URI}/chatroom`, { transports: ['websocket'] });
-    socket.on('connect', function() {
-        let sentMessageObject = {
+    <!-- You can also require other files to run in this process -->
+    <!-- <script>require("./notification.js")</script> -->
+    <script>
+      var ipcRenderer = require("electron").ipcRenderer;
+      var io = require("socket.io-client");
+      let data;
+      const SOCKET_URI = "https://backend.ubblu.ga";
+      const img = document.getElementById("closeNotification");
+      img.addEventListener("click", function () {
+        ipcRenderer.send("hide-notification");
+      });
+      ipcRenderer.on("handle-notification", function (e, notification) {
+        console.log("notify", e, notification);
+        const title = document.getElementById("title");
+        const message = document.getElementById("message");
+        const profileInitial = document.getElementById("profile-initial");
+        // play sound
+        const player = new Audio("./notification.mp3");
+        player.addEventListener(
+          "canplaythrough",
+          function () {
+            setTimeout(function () {
+              player.pause();
+            }, 3000);
+          },
+          false
+        );
+        player.play();
+        if (notification) {
+          data = notification.payload;
+          title.innerText = notification.title;
+          message.innerHTML = notification.body;
+          profileInitial.innerText = notification.title
+            .substring(0, 2)
+            .toUpperCase();
+        }
+      });
+      const sendButton = document.getElementById("send-button");
+      const replyInput = document.getElementById("reply-input");
+      replyInput.addEventListener("focus", function () {
+        ipcRenderer.send("stop-hide-notification-timer");
+      });
+      sendButton.addEventListener("click", function () {
+        socket = io(`${SOCKET_URI}/chatroom`, { transports: ["websocket"] });
+        socket.on("connect", function () {
+          let sentMessageObject = {
             messageType: "TEXT",
             isPinned: false,
             pinnedBy: null,
@@ -71,13 +87,12 @@ sendButton.addEventListener('click', function() {
             senderId: data.receiverId,
             receiverId: data.senderId,
           };
-          socket.emit('newMessage', sentMessageObject);
-          socket.on('addMessage', (msg) => {
-          ipcRenderer.send("hide-notification");
+          socket.emit("newMessage", sentMessageObject);
+          socket.on("addMessage", (msg) => {
+            ipcRenderer.send("hide-notification");
+          });
         });
-    });
-});
-
-</script>
-</body>
+      });
+    </script>
+  </body>
 </html>
