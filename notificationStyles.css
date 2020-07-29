@@ -68,7 +68,9 @@
     width: 100%;
 }
 .send-img {
-    height: 30px;
+    height: 25px;
+    background-color: #1138F7;
+    padding: 4px;
 }
 .profile-initial {
     width: 100%;
