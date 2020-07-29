@@ -18,27 +18,27 @@ var ipcRenderer = require("electron").ipcRenderer;
 ipcRenderer.on('ubblu-icon', function(e, image) {
   const ubblu = document.getElementById('ubblu');
   if(image === 'left') {
-    ubblu.style.width = `${Math.floor(75 / 2)}px`;
+    ubblu.style.width = '50px';
     ubblu.style.height = '75px';
     ubblu.style.borderTopRightRadius = '200px';
     ubblu.style.borderBottomRightRadius = '200px';
     ubblu.style.backgroundSize = 'cover';
   } else if(image === 'right') {
-    ubblu.style.width = `${Math.floor(75 / 2)}px`;
+    ubblu.style.width = '50px';
     ubblu.style.height = '75px';
-    // ubblu.style.height = `${Math.floor(75 / 2)}px`;
+    // ubblu.style.height = '50px';
     ubblu.style.borderTopLeftRadius = '200px';
     ubblu.style.borderBottomLeftRadius = '200px';
     ubblu.style.backgroundSize = 'cover';
   } else if(image === 'top') {
     ubblu.style.width = '75px';
-    ubblu.style.height = `${Math.floor(75 / 2)}px`;
+    ubblu.style.height = '50px';
     ubblu.style.borderBottomLeftRadius = '200px';
     ubblu.style.borderBottomRightRadius = '200px';
     ubblu.style.backgroundSize = 'cover';
   } else if(image === 'bottom') {
     ubblu.style.width = '75px';
-    ubblu.style.height = `${Math.floor(75 / 2)}px`;
+    ubblu.style.height = '50px';
     ubblu.style.borderTopRightRadius = '200px';
     ubblu.style.borderTopLeftRadius = '200px';
     ubblu.style.backgroundSize = 'cover';
