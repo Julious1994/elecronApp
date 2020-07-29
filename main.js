@@ -30,6 +30,8 @@ function createWindow() {
   const initialPosition = {
     x: Math.round(_screen.width * 0.80),
     y: Math.round(_screen.height * 0.80),
+    width: Math.round(_screen.width * 0.04),
+    height: Math.round(_screen.height * 0.07),
   };
   mainWindow = new BrowserWindow({
     width: 75,
@@ -80,9 +82,9 @@ function createUbbluWindow() {
   };
   ubbluWindow = new BrowserWindow({
     ...ubbluWindowSize,
-    maximizable: false,
+    maximizable: true,
     fullscreenable: false,
-    resizable: false,
+    resizable: true,
     // frame: false,
     // movable: true,
     transparent: false,
