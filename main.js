@@ -10,6 +10,7 @@ let mainWindow;
 let token;
 let _screen;
 let ubbluWindowSize;
+let notificationHideTimer = true;
 
 const appFolder = path.dirname(process.execPath)
 const updateExe = path.resolve(appFolder, '..', 'Update.exe')
@@ -249,8 +250,9 @@ app.on("ready", function () {
     // notificationWindow.setBounds({ x: bounds.x - 500, y: bounds.y - 550 });
     notificationWindow.show();
     notificationWindow.webContents.send('handle-notification', data);
+    notificationHideTimer = true;
     setTimeout(() => {
-      if(notificationWindow) {
+      if(notificationWindow && notificationHideTimer) {
         notificationWindow.hide();
       }  
     }, 5000);
@@ -270,6 +272,9 @@ app.on("ready", function () {
 
   ipcRenderer.on("set-token", (e, _token) => {
     token = _token;
+  });
+  ipcRenderer.on("stop-hide-notification-timer", () => {
+    notificationHideTimer = false;
   })
 });
 
