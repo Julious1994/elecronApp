@@ -61,6 +61,8 @@ function createWindow() {
   // Emitted when the window is closed.
   mainWindow.on("closed", function () {
     mainWindow = null;
+    ubbluWindow && ubbluWindow.close();
+    notificationWindow && notificationWindow.close();
   });
   mainWindow.on("resize", function () {});
   mainWindow.on("maximize", function () {
