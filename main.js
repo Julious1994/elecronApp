@@ -30,8 +30,8 @@ function createWindow() {
   const initialPosition = {
     x: Math.round(_screen.width * 0.80),
     y: Math.round(_screen.height * 0.80),
-    width: Math.round(_screen.width * 0.04),
-    height: Math.round(_screen.height * 0.07),
+    // width: Math.round(_screen.width * 0.04),
+    // height: Math.round(_screen.height * 0.07),
   };
   mainWindow = new BrowserWindow({
     width: 75,
@@ -52,8 +52,17 @@ function createWindow() {
     },
   });
   mainWindow.removeMenu();
-  mainWindow.setAlwaysOnTop(true);
+  mainWindow.setAlwaysOnTop(true,'pop-up-menu');
   // and load the index.html of the app.
+  mainWindow.setThumbarButtons([
+    {
+      icon: null,
+      click: () => {
+        mainWindow.setBounds({...initialPosition});
+      },
+      tooltip: 'RePosition',
+    }
+  ])
   mainWindow.loadURL(`file://${path.join(__dirname, "./index.html")}`);
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
@@ -87,6 +96,7 @@ function createUbbluWindow() {
     maximizable: true,
     fullscreenable: false,
     resizable: true,
+    skipTaskbar: true,
     // frame: false,
     // movable: true,
     transparent: false,
@@ -102,7 +112,7 @@ function createUbbluWindow() {
   ubbluWindow.removeMenu();
   ubbluWindow.setAlwaysOnTop(true);
   // and load the index.html of the app.
-  ubbluWindow.loadURL(`http://ubblu.ga/69/login`);
+  ubbluWindow.loadURL(`http://ubblu.ga/signin`);
   // Open the DevTools.
 
   // ubbluWindow.webContents.openDevTools()
@@ -131,6 +141,7 @@ function createNotificationWindow() {
     ...position,
     maximizable: false,
     fullscreenable: false,
+    skipTaskbar: true,
     // resizable: false,
     frame: false,
     titleBarStyle: "hiddenInset",
@@ -203,7 +214,6 @@ function getPosition({x, y}) {
   let size = {width: 75, height: 75};
   const _x = x < 0 ? 0 : x + 10 < width ? x : width - 25;
   const _y = y < 0 ? 0 : y + 10 < height ? y : height - 25;
-  
   if(_x >= width - size.width) {
     image = 'right';
     mainWindow.setBounds({ width: Math.floor(size.width / 2), height: size.height})
