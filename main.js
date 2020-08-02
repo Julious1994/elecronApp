@@ -13,12 +13,12 @@ let ubbluWindowSize;
 let notificationHideTimer = true;
 
 const appFolder = path.dirname(process.execPath)
-const updateExe = path.resolve(appFolder, '..', 'Update.exe')
+const updateExe = path.resolve(appFolder, '..', 'Ubblu.exe')
 const exeName = path.basename(process.execPath)
 
 app.setLoginItemSettings({
   openAtLogin: true,
-  path: updateExe,
+  path: process.execPath,
   args: [
     '--processStart', `"${exeName}"`,
     '--process-start-args', `"--hidden"`
