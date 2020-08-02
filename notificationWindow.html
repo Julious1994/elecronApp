@@ -72,7 +72,8 @@
         ipcRenderer.send("stop-hide-notification-timer");
       });
       sendButton.addEventListener("click", function () {
-        socket = io(`${SOCKET_URI}/chatroom`, { transports: ["websocket"] });
+        const receiverType = data.receiver === 'CHANNEL' ? 'rooms' : 'chatroom';
+        socket = io(`${SOCKET_URI}/${receiverType}`, { transports: ["websocket"] });
         socket.on("connect", function () {
           let sentMessageObject = {
             messageType: "TEXT",
@@ -90,6 +91,7 @@
           socket.emit("newMessage", sentMessageObject);
           socket.on("addMessage", (msg) => {
             ipcRenderer.send("hide-notification");
+            replyInput.value = '';
           });
         });
       });
