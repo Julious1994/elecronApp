@@ -263,7 +263,7 @@ app.on("ready", function () {
     // const bounds = mainWindow.getBounds();
     // notificationWindow.setBounds({ x: bounds.x - 500, y: bounds.y - 550 });
     notificationWindow.show();
-    notificationWindow.webContents.send('handle-notification', data);
+    notificationWindow.webContents.send('handle-notification', {...data, firebaseToken: token});
     notificationHideTimer = true;
     setTimeout(() => {
       if(notificationWindow && notificationHideTimer) {

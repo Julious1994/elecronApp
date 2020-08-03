@@ -34,7 +34,11 @@
     <script>
       var ipcRenderer = require("electron").ipcRenderer;
       var io = require("socket.io-client");
+      var {fetchUserData, pushNotification, exceptionList} = require("./service.js");
       let data;
+      let userData = [];
+      let jwtToken;
+      let firebaseToken;
       const SOCKET_URI = "https://backend.ubblu.ga";
       const img = document.getElementById("closeNotification");
       img.addEventListener("click", function () {
@@ -59,11 +63,20 @@
         player.play();
         if (notification) {
           data = notification.payload;
+          jwtToken = data.Authorization;
+          firebaseToken = notification.firebaseToken;
           title.innerText = notification.title;
           message.innerHTML = notification.body;
           profileInitial.innerText = notification.title
             .substring(0, 2)
             .toUpperCase();
+          fetchUserData(data.roomId, data.Authorization).then(res => {
+            console.log('userdata', e, firebaseToken)
+            if(res.success && res.data) {
+              const {users = []} =  res.data;
+              userData = [...users];
+            }
+          });
         }
       });
       const sendButton = document.getElementById("send-button");
@@ -72,8 +85,8 @@
         ipcRenderer.send("stop-hide-notification-timer");
       });
       sendButton.addEventListener("click", function () {
-        const receiverType = data.receiver === 'CHANNEL' ? 'rooms' : 'chatroom';
-        socket = io(`${SOCKET_URI}/${receiverType}`, { transports: ["websocket"] });
+        socket = io(`${SOCKET_URI}/chatroom`, { transports: ["websocket"] });
+        const sender = userData.find(user => user.firebase_id === firebaseToken);
         socket.on("connect", function () {
           let sentMessageObject = {
             messageType: "TEXT",
@@ -85,10 +98,17 @@
             tagged_id: null,
             ...data,
             message: replyInput.value,
-            senderId: data.receiverId,
-            receiverId: data.senderId,
+            senderId: sender.id,
+            receiverId: data.receiver === 'USER' ? data.senderId : data.receiverId,
           };
           socket.emit("newMessage", sentMessageObject);
+          const _data = {
+            ...data,
+            body: replyInput.value,
+          }
+          console.log(jwtToken, data);
+          pushNotification(_data, jwtToken, firebaseToken);
+          exceptionList(_data, jwtToken, firebaseToken);
           socket.on("addMessage", (msg) => {
             ipcRenderer.send("hide-notification");
             replyInput.value = '';
