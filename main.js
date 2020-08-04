@@ -182,16 +182,16 @@ function getUbbluAppPosition({x, y}) {
     const halfWidth = _width/2;
     let widthFlag = true;
     if(_height < y) {  // check for up space
-      _y = y - _height;
+      _y = y - (_height + 30);
     } else if(_height < (height - (y + 85))) {   // check for down space
       _y = y + 85;
     } else if(_width < (width - (x + 75))) {  // check for right side
-      _x = x + 75;
+      _x = x + 85;
       _y = y / 2;
       widthFlag = false;
     } else {
       // set for left side
-      _x = x - (_width + 75);
+      _x = x - (_width + 10);
       _y = y / 2;
       widthFlag = false;
     }
