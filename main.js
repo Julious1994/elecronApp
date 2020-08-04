@@ -43,7 +43,7 @@ function createWindow() {
     frame: false,
     movable: true,
     transparent: true,
-    titleBarStyle: "hidden",
+    titleBarStyle: "hidden-inset",
     title: "Ubblu",
     globals: { platform: "electron" },
     webPreferences: {
@@ -116,7 +116,6 @@ function createUbbluWindow() {
     // frame: false,
     // movable: true,
     transparent: false,
-    titleBarStyle: "hiddenInset",
     title: "Ubblu",
     globals: { platform: "electron" },
     show: false,
