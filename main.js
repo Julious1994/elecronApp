@@ -51,8 +51,14 @@ function createWindow() {
       preload: __dirname + '/preload.js'
     },
   });
+  app.dock.hide();
+  mainWindow.setAlwaysOnTop(true, "floating");
+  mainWindow.setVisibleOnAllWorkspaces(true);
+  mainWindow.setFullScreenable(false);
+  app.dock.show();
+
   mainWindow.removeMenu();
-  mainWindow.setAlwaysOnTop(true,'pop-up-menu');
+  // mainWindow.setAlwaysOnTop(true,'screen', 1);
   // and load the index.html of the app.
   mainWindow.setThumbarButtons([
     {
