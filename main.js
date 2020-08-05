@@ -84,18 +84,34 @@ function createWindow() {
 }
 
 let ubbluWindow;
+function setUbbluSize() {
+  const DEFAULT_WIDTH = 330;
+  const DEFAULT_HEIGHT = 600;
+  let height = Math.round(_screen.height * 0.70);
+  let width = Math.round(_screen.width * 0.18);
+  if(width < DEFAULT_WIDTH) {
+    width = DEFAULT_WIDTH;
+  }
+  if(height > DEFAULT_HEIGHT) {
+    height = DEFAULT_HEIGHT;
+  }
+  ubbluWindowSize = {
+    width,
+    height,
+  };
+}
 
 function createUbbluWindow() {
   // Create the browser window.
-  ubbluWindowSize = {
-    width: Math.round(_screen.width * 0.25),
-    height: Math.round(_screen.height * 0.70),
-  };
+  // ubbluWindowSize = {
+  //   width: 415,
+  //   height: Math.round(_screen.height * 0.70),
+  // };
   ubbluWindow = new BrowserWindow({
     ...ubbluWindowSize,
     maximizable: true,
     fullscreenable: false,
-    resizable: true,
+    resizable: false,
     skipTaskbar: true,
     // frame: false,
     // movable: true,
@@ -110,14 +126,19 @@ function createUbbluWindow() {
     },
   });
   ubbluWindow.removeMenu();
-  ubbluWindow.setAlwaysOnTop(true);
+  ubbluWindow.setAlwaysOnTop(true,'pop-up-menu', 1);
   // and load the index.html of the app.
   ubbluWindow.loadURL(`http://ubblu.ga/signin`);
   // Open the DevTools.
 
   // ubbluWindow.webContents.openDevTools()
+  ubbluWindow.on('close', (event) => {
+      event.preventDefault()
+      event.returnValue = false
+      ubbluWindow.hide();
+  })
   ubbluWindow.on("closed", function () {
-    ubbluWindow = null;
+    // ubbluWindow = null;
   });
   ubbluWindow.on("maximize", function () {
     ubbluWindow.reload();
@@ -125,6 +146,7 @@ function createUbbluWindow() {
   ubbluWindow.on("unmaximize", function () {
     ubbluWindow.reload();
   });
+  
 }
 
 let notificationWindow;
@@ -137,7 +159,7 @@ function createNotificationWindow() {
   console.log(position)
   notificationWindow = new BrowserWindow({
     width: 300,
-    height: 115,
+    height: 145,
     ...position,
     maximizable: false,
     fullscreenable: false,
@@ -184,7 +206,7 @@ function getUbbluAppPosition({x, y}) {
     if(_height < y) {  // check for up space
       _y = y - (_height + 30);
     } else if(_height < (height - (y + 85))) {   // check for down space
-      _y = y + 85;
+      _y = y ===0 ? y + 70 : y <= 30 ? y + 60 : y + 85;
     } else if(_width < (width - (x + 75))) {  // check for right side
       _x = x + 85;
       _y = y / 2;
@@ -238,6 +260,7 @@ function getPosition({x, y}) {
 
 app.on("ready", function () {
   _screen = screen.getPrimaryDisplay().workAreaSize;
+  setUbbluSize();
   createWindow();
   createUbbluWindow();
   createNotificationWindow();
@@ -245,10 +268,15 @@ app.on("ready", function () {
     if (!ubbluWindow) {
       createUbbluWindow();
     } else {
-      const bounds = mainWindow.getBounds();
-      const ubbluPosition = getUbbluAppPosition({ x: bounds.x, y: bounds.y });
-      ubbluWindow.show();
-      ubbluWindow.setBounds({ ...ubbluPosition });
+      if(ubbluWindow.isVisible()) {
+        ubbluWindow.hide();  
+      } else {
+        const bounds = mainWindow.getBounds();
+        const ubbluPosition = getUbbluAppPosition({ x: bounds.x, y: bounds.y });
+        ubbluWindow.show();
+        console.log(ubbluWindow.getBounds());
+        ubbluWindow.setBounds({ ...ubbluPosition });
+      }
     }
   });
   ipcRenderer.on("position-ubblu", function (e, position) {
@@ -289,6 +317,9 @@ app.on("ready", function () {
   });
   ipcRenderer.on("stop-hide-notification-timer", () => {
     notificationHideTimer = false;
+  });
+  ipcRenderer.on("goto-ubblu", (e, data) => {
+    ubbluWindow.loadURL(`https://ubblu.ga/${data.workspaceId}/messages/${data.senderId}/`);
   })
 });
 
