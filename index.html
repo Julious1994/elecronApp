@@ -20,6 +20,7 @@ ipcRenderer.on('ubblu-icon', function(e, image) {
   if(image === 'left') {
     ubblu.style.width = '60px';
     ubblu.style.height = '60px';
+    ubblu.style.borderRadius = 0;
     ubblu.style.borderTopRightRadius = '200px';
     ubblu.style.borderBottomRightRadius = '200px';
     ubblu.style.backgroundSize = 'cover';
@@ -27,18 +28,21 @@ ipcRenderer.on('ubblu-icon', function(e, image) {
     ubblu.style.width = '60px';
     ubblu.style.height = '60px';
     // ubblu.style.height = '60px';
+    ubblu.style.borderRadius = 0;
     ubblu.style.borderTopLeftRadius = '200px';
     ubblu.style.borderBottomLeftRadius = '200px';
     ubblu.style.backgroundSize = 'cover';
   } else if(image === 'top') {
     ubblu.style.width = '60px';
     ubblu.style.height = '60px';
+    ubblu.style.borderRadius = 0;
     ubblu.style.borderBottomLeftRadius = '200px';
     ubblu.style.borderBottomRightRadius = '200px';
     ubblu.style.backgroundSize = 'cover';
   } else if(image === 'bottom') {
     ubblu.style.width = '60px';
     ubblu.style.height = '60px';
+    ubblu.style.borderRadius = 0;
     ubblu.style.borderTopRightRadius = '200px';
     ubblu.style.borderTopLeftRadius = '200px';
     ubblu.style.backgroundSize = 'cover';
