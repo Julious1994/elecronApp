@@ -201,6 +201,7 @@ function getUbbluAppPosition({x, y}) {
   if(ubbluWindow && ubbluWindowSize) {
     const _height = ubbluWindowSize.height + 10;
     const _width = ubbluWindowSize.width;
+    const mainWindowBounds = mainWindow.getBounds();
     const halfWidth = _width/2;
     let widthFlag = true;
     if(_height < y) {  // check for up space
@@ -208,7 +209,7 @@ function getUbbluAppPosition({x, y}) {
     } else if(_height < (height - (y + 85))) {   // check for down space
       _y = y ===0 ? y + 70 : y <= 30 ? y + 60 : y + 85;
     } else if(_width < (width - (x + 75))) {  // check for right side
-      _x = x + 85;
+      _x = x + (mainWindowBounds.width < 75 ? 45 : 85);
       _y = y / 2;
       widthFlag = false;
     } else {
