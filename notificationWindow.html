@@ -85,17 +85,7 @@
           });
         }
       });
-      const sendButton = document.getElementById("send-button");
-      const replyInput = document.getElementById("reply-input");
-      replyInput.addEventListener("focus", function (e) {
-        e.stopPropagation();
-        ipcRenderer.send("stop-hide-notification-timer");
-      });
-      replyInput.addEventListener("click", function (e) {
-        e.stopPropagation();
-      });
-      sendButton.addEventListener("click", function (e) {
-        e.stopPropagation();
+      function sendMessage() {
         socket = io(`${SOCKET_URI}/chatroom`, { transports: ["websocket"] });
         const sender = userData.find(user => user.firebase_id === firebaseToken);
         socket.on("connect", function () {
@@ -125,6 +115,26 @@
             replyInput.value = '';
           });
         });
+      }
+      const sendButton = document.getElementById("send-button");
+      const replyInput = document.getElementById("reply-input");
+      replyInput.addEventListener("focus", function (e) {
+        e.stopPropagation();
+        ipcRenderer.send("stop-hide-notification-timer");
+      });
+      replyInput.addEventListener("click", function (e) {
+        e.stopPropagation();
+      });
+      replyInput.addEventListener("keyup", function(event) {
+        if (event.keyCode === 13) {
+          event.preventDefault();
+          sendMessage();
+        }
+      });
+
+      sendButton.addEventListener("click", function (e) {
+        e.stopPropagation();
+        sendMessage();
       });
     </script>
   </body>
