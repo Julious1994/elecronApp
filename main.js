@@ -86,7 +86,7 @@ function createWindow() {
 let ubbluWindow;
 function setUbbluSize() {
   const DEFAULT_WIDTH = 330;
-  const DEFAULT_HEIGHT = 600;
+  const DEFAULT_HEIGHT = 620;
   let height = Math.round(_screen.height * 0.70);
   let width = Math.round(_screen.width * 0.18);
   if(width < DEFAULT_WIDTH) {
