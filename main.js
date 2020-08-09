@@ -54,8 +54,7 @@ function createWindow() {
   app.dock.hide();
   mainWindow.setAlwaysOnTop(true, "floating");
   mainWindow.setVisibleOnAllWorkspaces(true);
-  mainWindow.setFullScreenable(false);
-  app.dock.show();
+  mainWindow.setFullScreenable(true);
 
   mainWindow.removeMenu();
   // mainWindow.setAlwaysOnTop(true,'screen', 1);
@@ -131,7 +130,9 @@ function createUbbluWindow() {
     },
   });
   ubbluWindow.removeMenu();
-  ubbluWindow.setAlwaysOnTop(true,'pop-up-menu', 1);
+  ubbluWindow.setAlwaysOnTop(true, "floating");
+  ubbluWindow.setVisibleOnAllWorkspaces(true);
+  ubbluWindow.setFullScreenable(true);
   // and load the index.html of the app.
   ubbluWindow.loadURL(`http://ubblu.ga/signin`);
   // Open the DevTools.
@@ -180,7 +181,9 @@ function createNotificationWindow() {
     },
   });
   notificationWindow.removeMenu();
-  notificationWindow.setAlwaysOnTop(true);
+  notificationWindow.setAlwaysOnTop(true, "floating");
+  notificationWindow.setVisibleOnAllWorkspaces(true);
+  notificationWindow.setFullScreenable(true);
   // and load the index.html of the app.
   notificationWindow.loadURL(`file://${path.join(__dirname, "./notificationWindow.html")}`);
 
