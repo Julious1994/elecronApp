@@ -13,7 +13,6 @@ let ubbluWindowSize;
 let notificationHideTimer = true;
 
 const appFolder = path.dirname(process.execPath)
-const updateExe = path.resolve(appFolder, '..', 'Ubblu.exe')
 const exeName = path.basename(process.execPath)
 
 app.setLoginItemSettings({
@@ -51,13 +50,12 @@ function createWindow() {
       preload: __dirname + '/preload.js'
     },
   });
-  app.dock.hide();
-  mainWindow.setAlwaysOnTop(true, "floating");
+  app.dock && app.dock.hide();
+  mainWindow.setAlwaysOnTop(true, "screen-saver");
   mainWindow.setVisibleOnAllWorkspaces(true);
   mainWindow.setFullScreenable(true);
 
   mainWindow.removeMenu();
-  // mainWindow.setAlwaysOnTop(true,'screen', 1);
   // and load the index.html of the app.
   mainWindow.setThumbarButtons([
     {
@@ -90,8 +88,8 @@ function createWindow() {
 
 let ubbluWindow;
 function setUbbluSize() {
-  const DEFAULT_WIDTH = 330;
-  const DEFAULT_HEIGHT = 620;
+  const DEFAULT_WIDTH = 315;
+  const DEFAULT_HEIGHT = 600;
   let height = Math.round(_screen.height * 0.70);
   let width = Math.round(_screen.width * 0.18);
   if(width < DEFAULT_WIDTH) {
@@ -115,11 +113,7 @@ function createUbbluWindow() {
   ubbluWindow = new BrowserWindow({
     ...ubbluWindowSize,
     maximizable: true,
-    fullscreenable: false,
-    resizable: false,
     skipTaskbar: true,
-    // frame: false,
-    // movable: true,
     transparent: false,
     title: "Ubblu",
     globals: { platform: "electron" },
@@ -152,7 +146,9 @@ function createUbbluWindow() {
   ubbluWindow.on("unmaximize", function () {
     ubbluWindow.reload();
   });
-  
+  ubbluWindow.on("will-resize", function (e) {
+    e.preventDefault();
+  });
 }
 
 let notificationWindow;
@@ -206,10 +202,10 @@ function getUbbluAppPosition({x, y}) {
   const {width, height} = _screen;
   let _x = 0;
   let _y = 0;
+  const  mainWindowBounds = mainWindow.getBounds();
   if(ubbluWindow && ubbluWindowSize) {
     const _height = ubbluWindowSize.height + 10;
     const _width = ubbluWindowSize.width;
-    const mainWindowBounds = mainWindow.getBounds();
     const halfWidth = _width/2;
     let widthFlag = true;
     if(_height < y) {  // check for up space
@@ -244,10 +240,10 @@ function getPosition({x, y}) {
   let image = 'full';
   let size = {width: 75, height: 75};
   const _x = x < 0 ? 0 : x + 10 < width ? x : width - 25;
-  const _y = y < 0 ? 0 : y + 10 < height ? y : height - 25;
+  const _y = y < 0 ? 0 : y + 10 < height ? y : height - 40;
   if(_x >= width - size.width) {
     image = 'right';
-    mainWindow.setBounds({ width: Math.floor(size.width / 2), height: size.height})
+    mainWindow.setBounds({ width: size.width, height: size.height})
   } else if (_x <= 0) {
     image = 'left';
     mainWindow.setBounds({ width: Math.floor(size.width / 2), height: size.height})
@@ -257,7 +253,7 @@ function getPosition({x, y}) {
     
   } else if(_y >= height - size.height) {
     image = 'bottom';
-    mainWindow.setBounds({ height: Math.floor(size.height / 2), width: size.width})
+    mainWindow.setBounds({ height: size.height, width: size.width})
   } else {
     mainWindow.setBounds({...size});
   }
