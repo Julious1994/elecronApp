@@ -209,11 +209,11 @@ function getUbbluAppPosition({x, y}) {
     const halfWidth = _width/2;
     let widthFlag = true;
     if(_height < y) {  // check for up space
-      _y = y - (_height + 30);
+      _y = y - (_height + 10);
     } else if(_height < (height - (y + 85))) {   // check for down space
       _y = y ===0 ? y + 70 : y <= 30 ? y + 60 : y + 85;
     } else if(_width < (width - (x + 75))) {  // check for right side
-      _x = x + (mainWindowBounds.width < 75 ? 45 : 85);
+      _x = x + (mainWindowBounds.width < 75 ? 40 : 85);
       _y = y / 2;
       widthFlag = false;
     } else {
@@ -243,7 +243,7 @@ function getPosition({x, y}) {
   const _y = y < 0 ? 0 : y + 10 < height ? y : height - 40;
   if(_x >= width - size.width) {
     image = 'right';
-    mainWindow.setBounds({ width: size.width, height: size.height})
+    mainWindow.setBounds({ width: 50, height: size.height})
   } else if (_x <= 0) {
     image = 'left';
     mainWindow.setBounds({ width: Math.floor(size.width / 2), height: size.height})
