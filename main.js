@@ -11,6 +11,7 @@ let token;
 let _screen;
 let ubbluWindowSize;
 let notificationHideTimer = true;
+let ubbluWindowMinimize = false;
 
 const appFolder = path.dirname(process.execPath)
 const exeName = path.basename(process.execPath)
@@ -146,6 +147,10 @@ function createUbbluWindow() {
   ubbluWindow.on("unmaximize", function () {
     ubbluWindow.reload();
   });
+  ubbluWindow.on("minimize", function () {
+    ubbluWindow.hide();
+    ubbluWindowMinimize =  true;
+  });
   ubbluWindow.on("will-resize", function (e) {
     e.preventDefault();
   });
@@ -279,6 +284,10 @@ app.on("ready", function () {
         const bounds = mainWindow.getBounds();
         const ubbluPosition = getUbbluAppPosition({ x: bounds.x, y: bounds.y });
         ubbluWindow.show();
+        if(ubbluWindowMinimize) {
+          ubbluWindow.reload();
+          ubbluWindowMinimize = false;
+        }
         console.log(ubbluWindow.getBounds());
         ubbluWindow.setBounds({ ...ubbluPosition });
       }
