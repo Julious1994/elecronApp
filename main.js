@@ -2,6 +2,7 @@
 const { app, BrowserWindow, Notification, screen } = require("electron");
 const path = require("path");
 const ipcRenderer = require("electron").ipcMain;
+const contextMenu = require('electron-context-menu');
 
 const { setup: setupPushReceiver } = require("electron-push-receiver");
 // Keep a global reference of the window object, if you don't, the window will
@@ -22,6 +23,21 @@ app.setLoginItemSettings({
   args: [
     '--processStart', `"${exeName}"`,
     '--process-start-args', `"--hidden"`
+  ]
+});
+
+ 
+contextMenu({
+  showInspectElement: false,
+  prepend: (defaultActions, params, browserWindow) => [
+    {
+      label: 'Search Google for “{selection}”',
+      // Only show it when right-clicking text
+      visible: params.selectionText.trim().length > 0,
+      click: () => {
+        shell.openExternal(`https://google.com/search?q=${encodeURIComponent(params.selectionText)}`);
+      }
+    }
   ]
 });
 
