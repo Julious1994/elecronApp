@@ -2,6 +2,10 @@
   "name": "Ubblu",
   "version": "1.0.0",
   "description": "A Chat application",
+  "author": {
+    "name": "Ubblu team",
+    "email": "amit@ubblu.com"
+  },
   "main": "main.js",
   "scripts": {
     "start": "electron --enable-transparent-visuals --disable-gpu .",
@@ -16,7 +20,6 @@
     "tutorial",
     "demo"
   ],
-  "author": "GitHub",
   "license": "CC0-1.0",
   "devDependencies": {
     "electron": "^7.1.5",
@@ -33,6 +36,16 @@
     "appId": "com.ubblu.app",
     "mac": {
       "category": "public.app-category.business"
+    },
+    "linux": {
+      "target": [
+        {
+          "target": "deb"
+        },
+        {
+          "target": "rpm"
+        }
+      ]
     }
   }
 }
