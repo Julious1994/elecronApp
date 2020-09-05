@@ -105,13 +105,19 @@ function createWindow() {
 
 let ubbluWindow;
 function setUbbluSize() {
+  const MIN_WIDTH = 350;
+  const MAX_WIDTH = 400;
+
   const DEFAULT_WIDTH = 315;
   const DEFAULT_HEIGHT = 600;
   let height = Math.round(_screen.height * 0.70);
   let width = Math.round(_screen.width * 0.18);
-  if(width < DEFAULT_WIDTH) {
-    width = DEFAULT_WIDTH;
+  if(width < MIN_WIDTH) {
+    width = MIN_WIDTH;
+  } else if(width > MAX_WIDTH) {
+    width = MAX_WIDTH;
   }
+  
   if(height > DEFAULT_HEIGHT) {
     height = DEFAULT_HEIGHT;
   }
@@ -129,7 +135,9 @@ function createUbbluWindow() {
   // };
   ubbluWindow = new BrowserWindow({
     ...ubbluWindowSize,
-    maximizable: true,
+    maximizable: false,
+    fullscreen: false,
+    resizable: false,
     skipTaskbar: true,
     transparent: false,
     title: "Ubblu",
@@ -181,8 +189,8 @@ function createNotificationWindow() {
   }
   console.log(position)
   notificationWindow = new BrowserWindow({
-    width: 300,
-    height: 145,
+    width: 365,
+    height: 155,
     ...position,
     maximizable: false,
     fullscreenable: false,
