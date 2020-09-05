@@ -189,8 +189,8 @@ function createNotificationWindow() {
   }
   console.log(position)
   notificationWindow = new BrowserWindow({
-    width: 300,
-    height: 145,
+    width: 365,
+    height: 155,
     ...position,
     maximizable: false,
     fullscreenable: false,
