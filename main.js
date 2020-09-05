@@ -129,7 +129,9 @@ function createUbbluWindow() {
   // };
   ubbluWindow = new BrowserWindow({
     ...ubbluWindowSize,
-    maximizable: true,
+    maximizable: false,
+    fullscreen: false,
+    resizable: false,
     skipTaskbar: true,
     transparent: false,
     title: "Ubblu",
